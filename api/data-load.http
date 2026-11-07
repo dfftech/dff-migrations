@@ -1,0 +1,20 @@
+### List every locale/namespace under .migration/locales
+GET http://localhost:4000/data-load?data=locales
+
+### Every namespace for a single locale
+GET http://localhost:4000/data-load?data=locales.en-US
+
+### A single namespace file for a locale
+GET http://localhost:4000/data-load?data=locales.en-US.app
+
+### Drill into a key inside that namespace
+GET http://localhost:4000/data-load?data=locales.en-US.app.name
+
+### Non-English locale
+GET http://localhost:4000/data-load?data=locales.fr-FR.nav
+
+### Missing data param -> error response
+GET http://localhost:4000/data-load
+
+### Unknown path -> error response
+GET http://localhost:4000/data-load?data=locales.xx-XX

@@ -1,5 +1,5 @@
 {
-  "name": "dff-migrations-pg",
+  "name": "dff-migrations",
   "private": true,
   "version": "0.0.5",
   "description": "Encore Typescript Starter",
@@ -11,8 +11,8 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "dff-util": "^1.4.4",
-    "encore.dev": "1.58.4",
+    "dff-util": "^1.4.5",
+    "encore.dev": "^1.58.6",
     "isomorphic-git": "^1.42.2",
     "kafkajs": "^2.2.4",
     "pg": "^8.23.0"

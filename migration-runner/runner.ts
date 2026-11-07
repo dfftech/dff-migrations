@@ -64,18 +64,19 @@ export async function runMigrationOnPool(
 
   const client = await pool.connect();
   let currentFile = "";
+  let currentSql = "";
   try {
     await client.query("BEGIN");
     await client.query(`SET search_path TO ${quoteIdent(resolved)}`);
     for (const name of order) {
       currentFile = `${name}.sql`;
-      const sql = readSqlFile(track, version, action, name);
-      if (!sql.trim()) {
+      currentSql = readSqlFile(track, version, action, name);
+      if (!currentSql.trim()) {
         mlog({ ...ctx, file: currentFile, phase: "skip" }, "empty");
         continue;
       }
       mlog({ ...ctx, file: currentFile, phase: "begin" });
-      await client.query(sql);
+      await client.query(currentSql);
       mlog({ ...ctx, file: currentFile, phase: "end" });
     }
     await client.query("COMMIT");
@@ -84,7 +85,8 @@ export async function runMigrationOnPool(
     merr(
       { ...ctx, file: currentFile || undefined, phase: "fail" },
       "version failed",
-      err
+      err,
+      currentSql
     );
     try {
       await client.query("ROLLBACK");

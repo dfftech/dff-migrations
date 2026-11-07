@@ -24,7 +24,7 @@ curl -sS "http://localhost:4000/migration/tenants/z-order/promote/all" | jq
 
 
 # Promote a single tenant (e.g. local) via the tenants track
-curl -sS "http://localhost:4000/migration/tenants/0003/promote/local" | jq
+curl -sS "http://localhost:4000/migration/tenants/9999/promote/local" | jq
 
 # Promote tenants z-order for a single tenant
 curl -sS "http://localhost:4000/migration/tenants/z-order/promote/local" | jq

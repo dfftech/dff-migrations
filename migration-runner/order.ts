@@ -1,13 +1,13 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { is_core_tenant, IS_TENANT } from '../db/db-connection';
-import { MIGRATION_DIR } from "../utils/clone-repo";
+import { MIGRATION_CONTENT_DIR } from "../utils/clone-repo";
 import { mlog, type MigrationLog } from "./log";
 
 export type MigrationAction = "promote" | "rollback";
 export const Z_ORDER = "z-order";
 
-/** Repo layout: .migration/admin/{version} and .migration/tenants/{version}. */
+/** Repo layout: .migration/pg/admin/{version} and .migration/pg/tenants/{version}. */
 export type MigrationTrack = "admin" | "tenants";
 export const ADMIN_TRACK: MigrationTrack = "admin";
 export const TENANTS_TRACK: MigrationTrack = "tenants";
@@ -72,16 +72,16 @@ const TRACK_FOLDER: Record<MigrationTrack, string> = {
 };
 
 /** Folder names reserved by the two known tracks — everything else under
- * MIGRATION_DIR is treated as a per-tenant override folder (e.g. "local",
- * "botnbolt", "dtf"). */
+ * MIGRATION_CONTENT_DIR is treated as a per-tenant override folder (e.g.
+ * "local", "botnbolt", "dtf"). */
 const RESERVED_FOLDERS = new Set(Object.values(TRACK_FOLDER));
 
 function trackDir(track: MigrationTrack): string {
-  return join(MIGRATION_DIR, TRACK_FOLDER[track] ?? track);
+  return join(MIGRATION_CONTENT_DIR, TRACK_FOLDER[track] ?? track);
 }
 
 function folderDir(folder: string): string {
-  return join(MIGRATION_DIR, folder);
+  return join(MIGRATION_CONTENT_DIR, folder);
 }
 
 function hasActionDir(dir: string, action?: MigrationAction): boolean {
@@ -119,7 +119,7 @@ function versionHasAction(track: MigrationTrack, version: string, action: Migrat
 }
 
 function dirHasZOrderFile(dir: string): boolean {
-  return existsSync(join(dir, 'z-order.yaml')) || existsSync(join(MIGRATION_DIR, 'z-order.yaml'));
+  return existsSync(join(dir, 'z-order.yaml')) || existsSync(join(MIGRATION_CONTENT_DIR, 'z-order.yaml'));
 }
 
 function trackHasZOrderFile(track: MigrationTrack): boolean {
@@ -156,12 +156,12 @@ export function catalogForFolder(folder: string): { versions: string[]; actions:
 }
 
 /**
- * Top-level folder names under MIGRATION_DIR that aren't the reserved
+ * Top-level folder names under MIGRATION_CONTENT_DIR that aren't the reserved
  * "core"/"tenants" track folders — these are per-tenant override folders.
  */
 export function listExtraFolders(): string[] {
   try {
-    return readdirSync(MIGRATION_DIR, { withFileTypes: true })
+    return readdirSync(MIGRATION_CONTENT_DIR, { withFileTypes: true })
       .filter((d) => d.isDirectory() && !d.name.startsWith('.') && !RESERVED_FOLDERS.has(d.name))
       .map((d) => d.name)
       .sort();
@@ -177,7 +177,7 @@ export function loadTopVersionOrder(
   ctx?: MigrationLog
 ): string[] {
   const trackPath = join(trackDir(track), "z-order.yaml");
-  const rootPath = join(MIGRATION_DIR, "z-order.yaml");
+  const rootPath = join(MIGRATION_CONTENT_DIR, "z-order.yaml");
 
   let versions: string[] | undefined;
   let source = "";
@@ -221,7 +221,7 @@ export function versionActionDir(
   return join(trackDir(track), assertVersion(version), action);
 }
 
-/** Per-version .migration/{track}/{version}/{action}/z-order.yaml — SQL file order. */
+/** Per-version .migration/pg/{track}/{version}/{action}/z-order.yaml — SQL file order. */
 export function loadSqlOrder(
   track: MigrationTrack,
   version: string,

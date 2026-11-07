@@ -33,10 +33,18 @@ function bracket(ctx: MigrationLog): string {
   return `[${inner}]`;
 }
 
-function fields(ctx: MigrationLog): string {
+/** First non-empty string in rest is treated as the failing SQL query text. */
+function findQuery(rest: unknown[]): string | undefined {
+  const sql = rest.find((item) => typeof item === "string" && item.trim());
+  return sql as string | undefined;
+}
+
+function fields(ctx: MigrationLog, rest: unknown[]): string {
   const parts = [bracket(ctx)];
   if (ctx.file) parts.push(`file=${ctx.file}`);
   if (ctx.phase) parts.push(ctx.phase);
+  const query = findQuery(rest);
+  if (query) parts.push(`query=${JSON.stringify(query)}`);
   return parts.join(" ");
 }
 
@@ -57,18 +65,20 @@ function payload(ctx: MigrationLog, rest: unknown[]): Record<string, unknown> {
     data.error = err.message;
     data.error_stack = err.stack;
   }
+  const query = findQuery(rest);
+  if (query) data.query = query;
   return data;
 }
 
-function line(ctx: MigrationLog, message: string): string {
+function line(ctx: MigrationLog, message: string, rest: unknown[]): string {
   const extra = message ? ` ${message}` : "";
-  return `[migration] ${fields(ctx)}${extra}`.trim();
+  return `[migration] ${fields(ctx, rest)}${extra}`.trim();
 }
 
 export function mlog(ctx: MigrationLog, message = "", ...rest: unknown[]): void {
-  emitAppLog("info", line(ctx, message), payload(ctx, rest));
+  emitAppLog("info", line(ctx, message, rest), payload(ctx, rest));
 }
 
 export function merr(ctx: MigrationLog, message = "", ...rest: unknown[]): void {
-  emitAppLog("error", line(ctx, message), payload(ctx, rest));
+  emitAppLog("error", line(ctx, message, rest), payload(ctx, rest));
 }

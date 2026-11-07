@@ -6,10 +6,16 @@ import { join } from 'node:path';
 import { env } from './app-util';
 
 const BRANCH = 'main';
-const HTTP_TIMEOUT_MS = 10 * 60 * 1000;
+const HTTP_TIMEOUT_MS = 100 * 60 * 1000;
 /** Hidden so Encore's watcher skips it (IgnoreFolder: names starting with '.'). */
 export const MIGRATION_DIR = join(process.cwd(), '.migration');
 const LEGACY_MIGRATION_DIR = join(process.cwd(), 'migration');
+/**
+ * Repo layout moved: admin/tenants/z-order.yaml/<tenant> now live under a
+ * "pg" subfolder of the clone, not directly at the clone root.
+ * MIGRATION_DIR stays the git clone root (.git lives here).
+ */
+export const MIGRATION_CONTENT_DIR = join(MIGRATION_DIR, 'pg');
 const SESSION_STAMP = join(MIGRATION_DIR, '.server-session');
 
 const http = {

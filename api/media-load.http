@@ -1,23 +1,23 @@
 ### Top-level file directly under media/
-GET http://localhost:4000/media-load?media=photo-1.jpg
+GET http://localhost:4000/media-load?query=photo-1.jpg
 
 ### File nested in a media subfolder (.migration/media/abcd/photo-3.jpg)
-GET http://localhost:4000/media-load?media=photo-3.jpg
+GET http://localhost:4000/media-load?query=photo-3.jpg
 
 ### Small variant file
-GET http://localhost:4000/media-load?media=photo-2-small.jpg
+GET http://localhost:4000/media-load?query=photo-2-small.jpg
 
 ### Video file
-GET http://localhost:4000/media-load?media=demo.mp4
+GET http://localhost:4000/media-load?query=demo.mp4
 
 ### Poster image
-GET http://localhost:4000/media-load?media=demo-poster.jpg
+GET http://localhost:4000/media-load?query=demo-poster.jpg
 
-### Missing media param -> 404 JSON error
+### Missing query param -> 404 JSON error
 GET http://localhost:4000/media-load
 
 ### Unknown file name -> 404 JSON error
-GET http://localhost:4000/media-load?media=does-not-exist.jpg
+GET http://localhost:4000/media-load?query=does-not-exist.jpg
 
 ### Path traversal attempt -> rejected
 GET http://localhost:4000/media-load?media=..%2F..%2Fpackage.json

@@ -1,9 +1,9 @@
 import type { ResponseType } from 'dff-util';
 import { readdirSync, readFileSync, statSync, type Dirent } from 'node:fs';
 import { join } from 'node:path';
-import { MIGRATION_DIR, pull_repo } from '../../utils/clone-repo';
 import { merr, mlog } from '../../migration-runner/log';
 import { session_meta } from '../../utils/app-util';
+import { MIGRATION_DIR, pull_repo } from '../../utils/clone-repo';
 
 function fail(err: unknown, requestId: string): ResponseType {
   return {
@@ -80,7 +80,7 @@ function isEmptyData(value: unknown): boolean {
 }
 
 /**
- * DataLoadService: walks a dot-separated "data" path under the migration
+ * ContentLoadService: walks a dot-separated "data" path under the migration
  * clone root (.migration) and returns whatever is found at that path.
  * Each segment first tries a child directory, then a "<segment>.json"
  * file, then a key inside the JSON object resolved so far.
@@ -92,7 +92,7 @@ function isEmptyData(value: unknown): boolean {
  *  - data=locales.en-US.app     -> parsed contents of app.json
  *  - data=locales.en-US.app.name -> further drills into the parsed JSON object
  */
-export class DataLoadService {
+export class ContentLoadService {
   /** Root directory every "data" path is resolved from (required). */
   static Db(): string {
     return MIGRATION_DIR;
@@ -130,21 +130,15 @@ export class DataLoadService {
 
         // Segment doesn't match a subdirectory or a "<segment>.json" file
         // under the currently resolved directory: no data at this path.
-        throw new Error(
-          '[data-load] no data found for "' + segments.slice(0, i + 1).join('.') + '"'
-        );
+        throw new Error('[content-load] no data found for "' + segments.slice(0, i + 1).join('.') + '"');
       }
 
       if (value === null || typeof value !== 'object') {
-        throw new Error(
-          '[data-load] "' + segments.slice(0, i).join('.') + '" has no key "' + segment + '"'
-        );
+        throw new Error('[content-load] "' + segments.slice(0, i).join('.') + '" has no key "' + segment + '"');
       }
       value = (value as Record<string, unknown>)[segment];
       if (value === undefined) {
-        throw new Error(
-          '[data-load] no data found for "' + segments.slice(0, i + 1).join('.') + '"'
-        );
+        throw new Error('[content-load] no data found for "' + segments.slice(0, i + 1).join('.') + '"');
       }
     }
 
@@ -168,7 +162,7 @@ export class DataLoadService {
 
     const data = this.resolvePath(trimmed);
     if (isEmptyData(data)) {
-      throw new Error('[data-load] data for "' + trimmed + '" is empty');
+      throw new Error('[content-load] data for "' + trimmed + '" is empty');
     }
     mlog({ phase: 'end' }, 'load ' + trimmed);
     return data;
@@ -178,7 +172,7 @@ export class DataLoadService {
 export async function loadData(dataPath: string): Promise<ResponseType> {
   const { request_id } = session_meta();
   try {
-    const data = await DataLoadService.LoadService(dataPath);
+    const data = await ContentLoadService.LoadService(dataPath);
     return {
       status: 200,
       data,

@@ -1,7 +1,7 @@
 {
   "name": "dff-migrations",
   "private": true,
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "DFF migrations service (Bun + Elysia)",
   "license": "MPL-2.0",
   "type": "module",

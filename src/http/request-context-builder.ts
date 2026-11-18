@@ -5,6 +5,14 @@ import { AppLogger } from "../logging/kafka-logger";
 const HEALTH_PATH = /^\/health\/([^/]+)$/;
 const MIGRATION_TENANT_PATH = /^\/migration\/[^/]+\/[^/]+\/(?:promote|rollback)\/([^/]+)$/;
 const ALL_TENANTS = "all";
+const EMPTY_HEADER_VALUES = new Set(["", "undefined", "null"]);
+
+/** Header value, treating "undefined"/"null" (sent by some clients) as absent. */
+function headerValue(headers: Headers, name: string): string | undefined {
+  const value = headers.get(name)?.trim();
+  if (!value || EMPTY_HEADER_VALUES.has(value.toLowerCase())) return undefined;
+  return value;
+}
 
 function extractToken(authorization: string | null): string | undefined {
   if (!authorization) return undefined;
@@ -44,10 +52,10 @@ export function tenantFromPath(path: string): string | undefined {
 export function buildRequestContext(request: Request): RequestContext {
   const url = new URL(request.url);
   const headers = request.headers;
-  const requestId = headers.get("request-id") || crypto.randomUUID();
-  const traceId = headers.get("x-trace-id") || headers.get("traceparent") || undefined;
-  const tenantId = tenantFromPath(url.pathname) || headers.get("x-tenant-id") || undefined;
-  const token = extractToken(headers.get("authorization"));
+  const requestId = headerValue(headers, "request-id") || crypto.randomUUID();
+  const traceId = headerValue(headers, "x-trace-id") || headerValue(headers, "traceparent");
+  const tenantId = tenantFromPath(url.pathname) || headerValue(headers, "x-tenant-id");
+  const token = extractToken(headerValue(headers, "authorization") ?? null);
   const sessionUser = decodeSession(token);
   sessionUser.requestId = requestId;
 

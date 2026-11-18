@@ -1,7 +1,7 @@
 import git, { type AuthCallback, type GitAuth, type GitProgressEvent, type HttpClient } from "isomorphic-git";
 import gitHttp from "isomorphic-git/http/node";
 import fs from "node:fs";
-import { mkdir, rm } from "node:fs/promises";
+import { mkdir, readdir, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { env, env_base_name } from "../config/env";
 import { writeLog } from "../logging/logger";
@@ -10,8 +10,8 @@ import { fileExists, isDirectory } from "../utils/fs-util";
 const BRANCH = "main";
 const HTTP_TIMEOUT_MS = 100 * 60 * 1000;
 
-/** Git clone root (.git lives here). */
-export const MIGRATION_DIR = join(process.cwd(), ".migration");
+/** Git clone root (.git lives here). Override with MIGRATION_DIR (e.g. a writable volume). */
+export const MIGRATION_DIR = Bun.env.MIGRATION_DIR || join(process.cwd(), ".migration");
 const LEGACY_MIGRATION_DIR = join(process.cwd(), "migration");
 
 /** Migration SQL lives under the "pg" subfolder of the clone. */
@@ -130,6 +130,17 @@ export function pull_repo(): Promise<void> {
 
 function ignoreError(): void {}
 
+/**
+ * Remove everything inside dir but keep dir itself, so a mounted volume
+ * (or a dir whose parent isn't writable) can be reset. Creates dir if missing.
+ */
+async function resetDir(dir: string): Promise<void> {
+  await mkdir(dir, { recursive: true });
+  for (const name of await readdir(dir)) {
+    await rm(join(dir, name), { recursive: true, force: true });
+  }
+}
+
 async function hasLocalClone(): Promise<boolean> {
   return fileExists(join(MIGRATION_DIR, ".git", "HEAD"));
 }
@@ -153,8 +164,8 @@ export async function reclone_repo(): Promise<void> {
   if (clonePromise) await clonePromise.catch(ignoreError);
   if (pullPromise) await pullPromise.catch(ignoreError);
 
-  writeLog("info", `[migration] reclone: deleting existing clone ${MIGRATION_DIR}`);
-  await rm(MIGRATION_DIR, { recursive: true, force: true });
+  writeLog("info", `[migration] reclone: clearing existing clone ${MIGRATION_DIR}`);
+  await resetDir(MIGRATION_DIR);
 
   clonePromise = null;
   await clone_repo();
@@ -175,7 +186,7 @@ async function runClone(): Promise<void> {
     return;
   }
 
-  await rm(LEGACY_MIGRATION_DIR, { recursive: true, force: true });
+  await rm(LEGACY_MIGRATION_DIR, { recursive: true, force: true }).catch(ignoreError);
 
   const cloned = await fileExists(join(MIGRATION_DIR, ".git", "HEAD"));
   if (cloned && (await isSameServerSession())) {
@@ -184,8 +195,7 @@ async function runClone(): Promise<void> {
   }
 
   writeLog("info", "[migration] server start, resetting clone dir");
-  await rm(MIGRATION_DIR, { recursive: true, force: true });
-  await mkdir(MIGRATION_DIR, { recursive: true });
+  await resetDir(MIGRATION_DIR);
 
   writeLog("info", `[migration] cloning ${publicRepoUrl(auth.repoUrl)} branch=${BRANCH} into ${MIGRATION_DIR}`);
   lastClonePhase = "";

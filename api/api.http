@@ -4,6 +4,9 @@ curl -sS "http://127.0.0.1:4000/migration/resync" | jq
 ###
 GET http://127.0.0.1:4000/migration/resync
 
+###
+http://127.0.0.1:4000/migration/catalog
+
 # Migration catalog (pulls the repo, then lists tracks/versions/actions)
 curl -sS "http://127.0.0.1:4000/migration/catalog" | jq
 

@@ -1,6 +1,46 @@
-node_modules
-/.migration
-/migration
-.DS_Store
-*.tsbuildinfo
+# Dependencies
+node_modules/
+.bun/
+
+# Bun
+# Keep bun.lock committed for reproducible installs.
+bun.lockb
+package-lock.json
+
+# Environment files
 .env
+.env.*
+!.env.example
+
+# TypeScript
+*.tsbuildinfo
+
+# Runtime and repository clones
+/.migration/
+/migration/
+coverage/
+dist/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.directory
+
+# Editors and IDEs
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~

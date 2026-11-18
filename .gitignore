@@ -3,7 +3,7 @@ node_modules/
 .bun/
 
 # Bun
-# Keep bun.lock committed for reproducible installs.
+bun.lock
 bun.lockb
 package-lock.json
 

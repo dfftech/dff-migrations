@@ -1,7 +1,7 @@
 FROM oven/bun:1.4-slim AS deps
 WORKDIR /app
-COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile --production
+COPY package.json ./
+RUN bun install --production
 
 FROM oven/bun:1.4-slim
 WORKDIR /app

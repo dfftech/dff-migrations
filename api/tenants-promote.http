@@ -1,47 +1,49 @@
 # Promote tenants version (all tenants)
-curl -sS "http://localhost:4000/migration/tenants/0000/promote/all" | jq
+curl -sS "http://127.0.0.1:4000/migration/tenants/0000/promote/all" | jq
 
-curl -sS "http://localhost:4000/migration/tenants/0001/promote/all" | jq
+curl -sS "http://127.0.0.1:4000/migration/tenants/0001/promote/all" | jq
 
-curl -sS "http://localhost:4000/migration/tenants/0002/promote/all" | jq
+curl -sS "http://127.0.0.1:4000/migration/tenants/0002/promote/all" | jq
 
-curl -sS "http://localhost:4000/migration/tenants/0003/promote/all" | jq
+curl -sS "http://127.0.0.1:4000/migration/tenants/0003/promote/all" | jq
 
-curl -sS "http://localhost:4000/migration/tenants/0004/promote/all" | jq
+curl -sS "http://127.0.0.1:4000/migration/tenants/0004/promote/all" | jq
 
-curl -sS "http://localhost:4000/migration/tenants/0005/promote/all" | jq
+curl -sS "http://127.0.0.1:4000/migration/tenants/0005/promote/all" | jq
 
-curl -sS "http://localhost:4000/migration/tenants/0006/promote/all" | jq
+curl -sS "http://127.0.0.1:4000/migration/tenants/0006/promote/all" | jq
 
-curl -sS "http://localhost:4000/migration/tenants/0007/promote/all" | jq
+curl -sS "http://127.0.0.1:4000/migration/tenants/0007/promote/all" | jq
 
-curl -sS "http://localhost:4000/migration/tenants/0008/promote/all" | jq
+curl -sS "http://127.0.0.1:4000/migration/tenants/0008/promote/all" | jq
 
-curl -sS "http://localhost:4000/migration/tenants/0009/promote/all" | jq
+curl -sS "http://127.0.0.1:4000/migration/tenants/0009/promote/all" | jq
 
 # Promote tenants z-order (all tenants)
-curl -sS "http://localhost:4000/migration/tenants/z-order/promote/all" | jq
+curl -sS "http://127.0.0.1:4000/migration/tenants/z-order/promote/all" | jq
 
 
 # Promote a single tenant (e.g. local) via the tenants track
-curl -sS "http://localhost:4000/migration/tenants/9999/promote/local" | jq
+curl -sS "http://127.0.0.1:4000/migration/tenants/9999/promote/local" | jq
 
 # Promote tenants z-order for a single tenant
-curl -sS "http://localhost:4000/migration/tenants/z-order/promote/local" | jq
+curl -sS "http://127.0.0.1:4000/migration/tenants/z-order/promote/local" | jq
 
 ###
-GET http://localhost:4000/migration/tenants/z-order/promote/all
+GET http://127.0.0.1:4000/migration/tenants/z-order/promote/all
 
 ###
-GET http://localhost:4000/migration/tenants/z-order/promote/local
+GET http://127.0.0.1:4000/migration/tenants/z-order/promote/local
 
 ###
-GET http://localhost:4000/migration/tenants/0004/promote/local
+GET http://127.0.0.1:4000/migration/tenants/0000/promote/local
 
+###
+GET http://127.0.0.1:4000/migration/local/0000/promote
 
-# Tenant-specific shortcut (not core) — execute only that tenant, not all tenants
-curl -sS "http://localhost:4000/migration/local/0000/promote" | jq
-curl -sS "http://localhost:4000/migration/local/z-order/promote" | jq
+###
+GET http://127.0.0.1:4000/migration/local/z-order/promote
 
-curl -sS "http://localhost:4000/migration/abcd/0000/promote" | jq
-curl -sS "http://localhost:4000/migration/abcd/z-order/promote" | jq
+# Tenant folder — runs .migration/pg/{tenant}/... (NOT the shared tenants folder) on that tenant's DB
+curl -sS "http://127.0.0.1:4000/migration/local/0000/promote" | jq
+curl -sS "http://127.0.0.1:4000/migration/local/z-order/promote" | jq

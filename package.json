@@ -1,23 +1,31 @@
 {
   "name": "dff-migrations",
   "private": true,
-  "version": "0.0.7",
-  "description": "Encore Typescript Starter",
+  "version": "0.1.1",
+  "description": "DFF migrations service (Bun + Elysia)",
   "license": "MPL-2.0",
   "type": "module",
-  "devDependencies": {
-    "@types/node": "^20.5.7",
-    "@types/pg": "^8.23.1",
-    "typescript": "^5.2.2"
+  "module": "src/server.ts",
+  "scripts": {
+    "dev": "bun --watch src/server.ts",
+    "start": "bun src/server.ts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "dff-util": "^1.4.5",
-    "encore.dev": "1.58.4",
+    "dff-util": "^1.4.8",
+    "elysia": "^2.0.0-rc.4",
+    "exact-mirror": "^1.2.7",
     "isomorphic-git": "^1.42.2",
     "kafkajs": "^2.2.4",
-    "pg": "^8.23.0"
+    "openapi-types": "^12.1.3",
+    "typebox": "^1.4.7"
   },
-  "scripts": {
-    "start": "encore run"
-  }
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "typescript": "^5.9.0"
+  },
+  "engines": {
+    "bun": ">=1.4.0"
+  },
+  "packageManager": "bun@1.4.4"
 }

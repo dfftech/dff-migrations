@@ -1,0 +1,5 @@
+node_modules
+.migration
+.git
+.DS_Store
+api

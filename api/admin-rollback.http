@@ -1,14 +1,14 @@
 # Rollback core version (core DB only)
-curl -sS "http://localhost:4000/migration/core/0000/rollback" | jq
-curl -sS "http://localhost:4000/migration/core/0001/rollback" | jq
-curl -sS "http://localhost:4000/migration/core/0002/rollback" | jq
-curl -sS "http://localhost:4000/migration/core/0003/rollback" | jq
-curl -sS "http://localhost:4000/migration/core/0004/rollback" | jq
-curl -sS "http://localhost:4000/migration/core/0005/rollback" | jq
-curl -sS "http://localhost:4000/migration/core/0006/rollback" | jq
-curl -sS "http://localhost:4000/migration/core/0007/rollback" | jq
-curl -sS "http://localhost:4000/migration/core/0008/rollback" | jq
-curl -sS "http://localhost:4000/migration/core/0009/rollback" | jq
+curl -sS "http://127.0.0.1:4000/migration/core/0000/rollback" | jq
+curl -sS "http://127.0.0.1:4000/migration/core/0001/rollback" | jq
+curl -sS "http://127.0.0.1:4000/migration/core/0002/rollback" | jq
+curl -sS "http://127.0.0.1:4000/migration/core/0003/rollback" | jq
+curl -sS "http://127.0.0.1:4000/migration/core/0004/rollback" | jq
+curl -sS "http://127.0.0.1:4000/migration/core/0005/rollback" | jq
+curl -sS "http://127.0.0.1:4000/migration/core/0006/rollback" | jq
+curl -sS "http://127.0.0.1:4000/migration/core/0007/rollback" | jq
+curl -sS "http://127.0.0.1:4000/migration/core/0008/rollback" | jq
+curl -sS "http://127.0.0.1:4000/migration/core/0009/rollback" | jq
 
 # Rollback core z-order
-curl -sS "http://localhost:4000/migration/core/z-order/rollback" | jq
+curl -sS "http://127.0.0.1:4000/migration/core/z-order/rollback" | jq
